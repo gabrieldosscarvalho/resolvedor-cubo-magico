@@ -1,0 +1,1 @@
+# resolvedor-cubo-magico
