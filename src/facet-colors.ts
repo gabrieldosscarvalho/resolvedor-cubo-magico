@@ -6,7 +6,7 @@ export enum FACET_COLORS {
   BLUE = "#03A9F4",
   YELLOW = "#FFEB3B",
   ORANGE = "#FB8C00",
-  GREY = "#9E9E9E",
+  GREY = "#795548",
 }
 
 const FACET_COLORS_KEYS = Object.keys(FACET_COLORS);
@@ -18,8 +18,6 @@ export class FacetColorPicker {
 
   constructor(readonly size: number) {
     this.colors = [];
-
-    const sizePerColor = Math.round(size / FACET_COLORS_KEYS.length);
 
     for (
       let colorIndex = 0;

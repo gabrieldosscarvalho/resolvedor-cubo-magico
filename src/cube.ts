@@ -14,17 +14,19 @@
 import { Facet } from "./facet";
 import { FacetColorPicker } from "./facet-colors";
 
+export type NumberFaces = 1 | 2 | 3 | 4 | 5 | 6;
+
 interface CubeMovement {
-  face: 1 | 2 | 3 | 4 | 5 | 6;
+  face: NumberFaces;
   direction: "LEFT" | "RIGHT";
 }
 
 type Face = Facet[];
 
 export class Cube {
-  readonly currentFace = 1;
+  // readonly currentFace = 1;
 
-  faces: Face[];
+  readonly faces: Face[];
 
   constructor(size: number) {
     this.faces = [];
@@ -39,7 +41,7 @@ export class Cube {
 
     console.log("---initRandom", { size, cubeSize, colorPicker });
 
-    for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
+    for (let faceIndex = 1; faceIndex <= 6; faceIndex++) {
       for (let facetIndex = 0; facetIndex < cubeSize; facetIndex++) {
         if (this.faces[faceIndex] === undefined) {
           this.faces[faceIndex] = [];

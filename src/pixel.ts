@@ -3,8 +3,20 @@ interface PixelPosition {
   readonly y: number;
 }
 
-const SIZE = 50;
+interface PixelAttributes {
+  readonly position: PixelPosition;
+  readonly color: string;
+  readonly size: number;
+}
 
-class Pixel {
-  constructor(readonly position: PixelPosition, readonly size: number = SIZE) {}
+export class Pixel implements PixelAttributes {
+  readonly position: PixelPosition;
+  readonly color: string;
+  readonly size: number;
+
+  constructor(attributes: PixelAttributes) {
+    this.position = attributes.position;
+    this.color = attributes.color;
+    this.size = attributes.size;
+  }
 }
