@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const cube = new Cube(cubeSize);
 
+  cube.initRandom();
+
   viewport.init();
 
   console.log("--cube", { cube });

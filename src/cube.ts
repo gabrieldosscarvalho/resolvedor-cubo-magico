@@ -28,18 +28,19 @@ export class Cube {
 
   readonly faces: Face[];
 
+  readonly size: number;
+
   constructor(size: number) {
     this.faces = [];
-
-    this.initRandom(size);
+    this.size = size;
   }
 
-  private initRandom(size: number) {
-    const cubeSize = size * size;
+  public initRandom() {
+    const cubeSize = this.size * this.size;
 
     const colorPicker = new FacetColorPicker(cubeSize);
 
-    console.log("---initRandom", { size, cubeSize, colorPicker });
+    console.log("---initRandom", { size: this.size, cubeSize, colorPicker });
 
     for (let faceIndex = 1; faceIndex <= 6; faceIndex++) {
       for (let facetIndex = 0; facetIndex < cubeSize; facetIndex++) {
