@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import { Cube, NumberFaces } from "./cube";
 import { Facet } from "./facet";
 import { Pixel } from "./pixel";
@@ -106,7 +107,7 @@ export class Viewport {
   }
 
   public renderCube(cube: Cube) {
-    const faces = [...cube.faces];
+    const faces = cloneDeep(cube.faces);
 
     this.renderFace(
       {
