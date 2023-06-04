@@ -12,18 +12,10 @@
  */
 
 import { cloneDeep } from "lodash";
-import { Facet } from "./facet";
-import { FacetColorPicker } from "./facet-colors";
+import { Face, LetterFace, LetterFaceType } from "./face";
+import { Facet, Facets } from "./facet";
+import { FACET_COLORS, FacetColorPicker } from "./facet-colors";
 
-export enum LetterFace {
-  F = 1,
-  R = 2,
-  U = 3,
-  B = 4,
-  L = 5,
-  D = 6,
-}
-export type LetterFaceType = keyof typeof LetterFace;
 export type NumberFaces = 1 | 2 | 3 | 4 | 5 | 6;
 export type Degrees = -90 | 90;
 
@@ -62,26 +54,57 @@ const faceMovements: Readonly<
 } as const;
 
 interface CubeMovement {
-  face: keyof typeof LetterFace;
+  face: LetterFaceType;
   degree: Degrees;
 }
 
-type Face = Facet[];
+type FaceOld = Facet[];
 
 const print = (val: unknown) => (val ? JSON.parse(JSON.stringify(val)) : val);
 
 export class Cube {
   // readonly currentFace = 1;
 
+  facesOld: FaceOld[];
+
   faces: Face[];
 
   readonly size: number;
   readonly cubeSize: number;
 
-  constructor(size: number) {
+  constructor(
+    size: 3 // SÓ PODE SER 3 ENQUANTO NÃO FOR RESOLVIDO A MONTAGEM DOS FACETS PELOS PONTOS CARDEAIS
+  ) {
+    this.facesOld = [];
     this.faces = [];
     this.size = size;
     this.cubeSize = this.size * this.size;
+  }
+
+  public init() {
+    const colorPicker = new FacetColorPicker(this.cubeSize);
+
+    console.log("---init", {
+      size: this.size,
+      cubeSize: this.cubeSize,
+      colorPicker,
+    });
+
+    let currentColor = colorPicker.popColor();
+
+    const tempFaces = [];
+
+    for (let faceIndex = 1; faceIndex <= 6; faceIndex++) {
+      const facets = [];
+
+      for (let facetIndex = 0; facetIndex < this.cubeSize; facetIndex++) {
+        facets.push(new Facet(currentColor.next().value));
+      }
+
+      tempFaces[faceIndex] = [...facets];
+    }
+
+    this.mountCube(tempFaces);
   }
 
   public initRandom() {
@@ -90,118 +113,215 @@ export class Cube {
     console.log("---initRandom", {
       size: this.size,
       cubeSize: this.cubeSize,
-      colorPicker,
+      colorPicker: cloneDeep(colorPicker),
     });
 
-    for (let faceIndex = 1; faceIndex <= 6; faceIndex++) {
-      for (let facetIndex = 0; facetIndex < this.cubeSize; facetIndex++) {
-        if (this.faces[faceIndex] === undefined) {
-          this.faces[faceIndex] = [];
-        }
+    const tempFaces = [];
 
-        this.faces[faceIndex][facetIndex] = new Facet(
-          colorPicker.popRandomColor()
-        );
+    for (let faceIndex = 1; faceIndex <= 6; faceIndex++) {
+      const facets = [];
+
+      for (let facetIndex = 0; facetIndex < this.cubeSize; facetIndex++) {
+        facets.push(new Facet(colorPicker.popRandomColor()));
       }
+
+      tempFaces[faceIndex] = [...facets];
     }
+
+    this.mountCube(tempFaces);
+  }
+
+  private mountCube(faces: Array<Facets>) {
+    this.faces[LetterFace.F] = new Face({
+      N: [
+        faces[LetterFace.U][6],
+        faces[LetterFace.U][7],
+        faces[LetterFace.U][8],
+      ],
+      E: [
+        faces[LetterFace.R][0],
+        faces[LetterFace.R][3],
+        faces[LetterFace.R][6],
+      ],
+      S: [
+        faces[LetterFace.D][2],
+        faces[LetterFace.D][1],
+        faces[LetterFace.D][0],
+      ],
+      W: [
+        faces[LetterFace.L][8],
+        faces[LetterFace.L][5],
+        faces[LetterFace.L][2],
+      ],
+      facets: [...faces[LetterFace.F]],
+    });
+
+    this.faces[LetterFace.R] = new Face({
+      N: [
+        faces[LetterFace.U][8],
+        faces[LetterFace.U][5],
+        faces[LetterFace.U][2],
+      ],
+      E: [
+        faces[LetterFace.B][0],
+        faces[LetterFace.B][3],
+        faces[LetterFace.B][6],
+      ],
+      S: [
+        faces[LetterFace.D][8],
+        faces[LetterFace.D][5],
+        faces[LetterFace.D][2],
+      ],
+      W: [
+        faces[LetterFace.F][8],
+        faces[LetterFace.F][5],
+        faces[LetterFace.F][2],
+      ],
+      facets: [...faces[LetterFace.R]],
+    });
+
+    this.faces[LetterFace.U] = new Face({
+      N: [
+        faces[LetterFace.B][0],
+        faces[LetterFace.B][1],
+        faces[LetterFace.B][2],
+      ],
+      E: [
+        faces[LetterFace.R][0],
+        faces[LetterFace.R][1],
+        faces[LetterFace.R][2],
+      ],
+      S: [
+        faces[LetterFace.F][0],
+        faces[LetterFace.F][1],
+        faces[LetterFace.F][2],
+      ],
+      W: [
+        faces[LetterFace.L][0],
+        faces[LetterFace.L][1],
+        faces[LetterFace.L][2],
+      ],
+      facets: [...faces[LetterFace.U]],
+    });
+
+    this.faces[LetterFace.B] = new Face({
+      N: [
+        faces[LetterFace.U][2],
+        faces[LetterFace.U][1],
+        faces[LetterFace.U][0],
+      ],
+      E: [
+        faces[LetterFace.L][0],
+        faces[LetterFace.L][3],
+        faces[LetterFace.L][6],
+      ],
+      S: [
+        faces[LetterFace.D][6],
+        faces[LetterFace.D][7],
+        faces[LetterFace.D][8],
+      ],
+      W: [
+        faces[LetterFace.R][8],
+        faces[LetterFace.R][5],
+        faces[LetterFace.R][2],
+      ],
+      facets: [...faces[LetterFace.B]],
+    });
+
+    this.faces[LetterFace.L] = new Face({
+      N: [
+        faces[LetterFace.U][0],
+        faces[LetterFace.U][3],
+        faces[LetterFace.U][6],
+      ],
+      E: [
+        faces[LetterFace.F][0],
+        faces[LetterFace.F][3],
+        faces[LetterFace.F][6],
+      ],
+      S: [
+        faces[LetterFace.D][0],
+        faces[LetterFace.D][3],
+        faces[LetterFace.D][6],
+      ],
+      W: [
+        faces[LetterFace.B][8],
+        faces[LetterFace.B][5],
+        faces[LetterFace.B][2],
+      ],
+      facets: [...faces[LetterFace.L]],
+    });
+
+    this.faces[LetterFace.D] = new Face({
+      N: [
+        faces[LetterFace.F][6],
+        faces[LetterFace.F][7],
+        faces[LetterFace.F][8],
+      ],
+      E: [
+        faces[LetterFace.R][6],
+        faces[LetterFace.R][7],
+        faces[LetterFace.R][8],
+      ],
+      S: [
+        faces[LetterFace.B][6],
+        faces[LetterFace.B][7],
+        faces[LetterFace.B][8],
+      ],
+      W: [
+        faces[LetterFace.L][6],
+        faces[LetterFace.L][7],
+        faces[LetterFace.L][8],
+      ],
+      facets: [...faces[LetterFace.D]],
+    });
   }
 
   move(movement: CubeMovement) {
     console.group("--move");
 
-    const nextFaces = faceMovements[movement.face];
+    const movementFace = LetterFace[movement.face];
 
-    const newFaces = cloneDeep(this.faces);
+    const oldFace = cloneDeep(this.faces[movementFace]);
+    const face = this.faces[movementFace];
 
     console.log("--move: Data", {
       movement,
-      nextFaces,
+      movementFace,
       faces: print(this.faces),
-      newFaces: print(newFaces),
+      oldFace: print(oldFace),
+      face: print(face),
     });
 
-    const oldFacesToGetFacets: Record<number, Face> = {} as Record<
-      LetterFace,
-      Face
-    >;
+    switch (movement.degree) {
+      case 90:
+        for (let index = 0; index < this.size; index++) {
+          face.N[index].color = oldFace.W[index].color;
+          face.E[index].color = oldFace.N[index].color;
+          face.S[index].color = oldFace.E[index].color;
+          face.W[index].color = oldFace.S[index].color;
+        }
+        break;
 
-    const next = (currentNextFacesIndex: number): void => {
-      if (currentNextFacesIndex >= nextFaces.length) {
-        return;
-      }
+      case -90:
+        for (let index = 0; index < this.size; index++) {
+          face.N[index].color = oldFace.E[index].color;
+          face.E[index].color = oldFace.S[index].color;
+          face.S[index].color = oldFace.W[index].color;
+          face.W[index].color = oldFace.N[index].color;
+        }
+        break;
+    }
 
-      console.group(`--next: ${currentNextFacesIndex}`);
-
-      const currentFaceIndex = nextFaces[currentNextFacesIndex];
-      const nextFacesIndexToGetFacets =
-        currentNextFacesIndex === 0
-          ? nextFaces.length - 1
-          : currentNextFacesIndex - 1;
-
-      const currentFace = cloneDeep(this.faces[currentFaceIndex]);
-
-      oldFacesToGetFacets[currentNextFacesIndex] = cloneDeep(currentFace);
-
-      let faceToGetFacets = cloneDeep(
-        oldFacesToGetFacets[nextFacesIndexToGetFacets] ?? []
-      );
-
-      console.log("--next: Data Pre if", {
-        currentFaceIndex,
-        nextFacesIndexToGetFacets,
-        oldFacesToGetFacets: print(oldFacesToGetFacets),
-        faceToGetFacets: print(faceToGetFacets),
-        currentFace: print(currentFace),
-      });
-
-      if (faceToGetFacets.length === 0) {
-        oldFacesToGetFacets[nextFacesIndexToGetFacets] = cloneDeep(
-          this.faces[nextFacesIndexToGetFacets]
-        );
-
-        faceToGetFacets = cloneDeep(
-          oldFacesToGetFacets[nextFacesIndexToGetFacets]
-        );
-      }
-
-      console.log("--next: Data After if", {
-        oldFacesToGetFacets: print(oldFacesToGetFacets),
-        faceToGetFacets: print(faceToGetFacets),
-      });
-
-      for (
-        let facetIndex = 0;
-        facetIndex < this.cubeSize;
-        facetIndex = facetIndex + this.size
-      ) {
-        currentFace[facetIndex] = { ...faceToGetFacets[facetIndex] };
-      }
-
-      console.log("--next: Data end", {
-        currentFaceIndex,
-        nextFacesIndexToGetFacets,
-        currentFace: print(currentFace),
-        oldFacesToGetFacets: print(oldFacesToGetFacets),
-        faceToGetFacets: print(faceToGetFacets),
-      });
-
-      newFaces[currentFaceIndex] = cloneDeep(currentFace);
-
-      console.groupEnd();
-
-      return next(++currentNextFacesIndex);
-    };
-
-    next(0);
+    // PRECISA ROTACIONAR A FACE AINDA
 
     console.log("--move: Data end", {
       movement,
-      nextFaces,
+      movementFace,
       faces: print(this.faces),
-      newFaces: print(newFaces),
+      oldFace: print(oldFace),
+      face: print(face),
     });
-
-    this.faces = cloneDeep(newFaces);
 
     console.groupEnd();
   }

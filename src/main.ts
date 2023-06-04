@@ -1,6 +1,7 @@
 //import { mainExampleCubeDemo } from "./example-cube/webgl-demo";
 
-import { Cube, Degrees, LetterFaceType } from "./cube";
+import { Cube, Degrees } from "./cube";
+import { LetterFaceType } from "./face";
 import { Viewport } from "./viewport";
 
 const getInputRadioValue = (
@@ -60,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // const cubeSize = parseInt(
   //   prompt("Informe o tamanho do cubo (ex.: 2): ") ?? "2"
   // );
-  const cubeSize = 2;
+  const cubeSize = 3;
 
   const viewport = new Viewport({
     canvasContext: ctx,

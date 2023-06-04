@@ -1,6 +1,5 @@
-import { cloneDeep } from "lodash";
 import { Cube, NumberFaces } from "./cube";
-import { Facet } from "./facet";
+import { Face, LetterFace } from "./face";
 import { Pixel } from "./pixel";
 
 const EMPTY_PIXEL_COLOR = "#ccc";
@@ -68,9 +67,8 @@ export class Viewport {
 
   private getPixelSize() {
     const pixelSeizeFactor = Math.ceil(this.width / this.height);
-    const minCubeColumns =
-      (this.cubeSize * this.cubeSize * 4) / pixelSeizeFactor;
-    const minCubeLines = (this.cubeSize * this.cubeSize * 3) / pixelSeizeFactor;
+    const minCubeColumns = (this.cubeSize * 2 * 4) / pixelSeizeFactor;
+    const minCubeLines = (this.cubeSize * 2 * 3) / pixelSeizeFactor;
 
     const result = this.width / minCubeColumns - this.height / minCubeLines;
 
@@ -107,7 +105,47 @@ export class Viewport {
   }
 
   public renderCube(cube: Cube) {
-    const faces = cloneDeep(cube.faces);
+    const faces = cube.faces;
+
+    this.renderFace(
+      {
+        lineInitialValue: this.cubeSize,
+        lineIsValid: (line: number) => line < this.cubeSize * 2,
+        columnInitialValue: this.cubeSize,
+        columnIsValid: (column: number) => column < this.cubeSize * 2,
+      },
+      faces[LetterFace.F]
+    );
+
+    this.renderFace(
+      {
+        lineInitialValue: this.cubeSize,
+        lineIsValid: (line: number) => line < this.cubeSize * 2,
+        columnInitialValue: this.cubeSize * 2,
+        columnIsValid: (column: number) => column < this.cubeSize * 3,
+      },
+      faces[LetterFace.R]
+    );
+
+    this.renderFace(
+      {
+        lineInitialValue: 0,
+        lineIsValid: (line: number) => line < this.cubeSize,
+        columnInitialValue: this.cubeSize,
+        columnIsValid: (column: number) => column < this.cubeSize * 2,
+      },
+      faces[LetterFace.U]
+    );
+
+    this.renderFace(
+      {
+        lineInitialValue: this.cubeSize,
+        lineIsValid: (line: number) => line < this.cubeSize * 2,
+        columnInitialValue: this.cubeSize * 3,
+        columnIsValid: (column: number) => column < this.cubeSize * 4,
+      },
+      faces[LetterFace.B]
+    );
 
     this.renderFace(
       {
@@ -116,45 +154,9 @@ export class Viewport {
         columnInitialValue: 0,
         columnIsValid: (column: number) => column < this.cubeSize,
       },
-      faces[1]
+      faces[LetterFace.L]
     );
 
-    this.renderFace(
-      {
-        lineInitialValue: this.cubeSize,
-        lineIsValid: (line: number) => line < this.cubeSize * 2,
-        columnInitialValue: this.cubeSize,
-        columnIsValid: (column: number) => column < this.cubeSize * 2,
-      },
-      faces[2]
-    );
-    this.renderFace(
-      {
-        lineInitialValue: this.cubeSize,
-        lineIsValid: (line: number) => line < this.cubeSize * 2,
-        columnInitialValue: this.cubeSize * 2,
-        columnIsValid: (column: number) => column < this.cubeSize * 3,
-      },
-      faces[3]
-    );
-    this.renderFace(
-      {
-        lineInitialValue: this.cubeSize,
-        lineIsValid: (line: number) => line < this.cubeSize * 2,
-        columnInitialValue: this.cubeSize * 3,
-        columnIsValid: (column: number) => column < this.cubeSize * 4,
-      },
-      faces[4]
-    );
-    this.renderFace(
-      {
-        lineInitialValue: 0,
-        lineIsValid: (line: number) => line < this.cubeSize,
-        columnInitialValue: this.cubeSize,
-        columnIsValid: (column: number) => column < this.cubeSize * 2,
-      },
-      faces[5]
-    );
     this.renderFace(
       {
         lineInitialValue: this.cubeSize * 2,
@@ -162,7 +164,7 @@ export class Viewport {
         columnInitialValue: this.cubeSize,
         columnIsValid: (column: number) => column < this.cubeSize * 2,
       },
-      faces[6]
+      faces[LetterFace.D]
     );
   }
 
@@ -173,7 +175,7 @@ export class Viewport {
       columnInitialValue: number;
       columnIsValid: (column: number) => boolean;
     },
-    facets: Facet[]
+    { facets }: Face
   ) {
     let line = renderArguments.lineInitialValue;
     let column = renderArguments.columnInitialValue;
@@ -183,6 +185,9 @@ export class Viewport {
       while (renderArguments.lineIsValid(line)) {
         while (renderArguments.columnIsValid(column)) {
           const currentPixel = this.pixels.get(`${column}-${line}`);
+          if (!currentPixel) {
+            throw new Error("Pixel not found");
+          }
 
           this.updatePixel(
             new Pixel({
