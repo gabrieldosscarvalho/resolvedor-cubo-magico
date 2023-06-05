@@ -15,6 +15,7 @@ import { cloneDeep } from "lodash";
 import { Face, LetterFace, LetterFaceType } from "./face";
 import { Facet, Facets } from "./facet";
 import { FACET_COLORS, FacetColorPicker } from "./facet-colors";
+import { randomIntFromInterval } from "./utls";
 
 export type NumberFaces = 1 | 2 | 3 | 4 | 5 | 6;
 export type Degrees = -90 | 90;
@@ -108,27 +109,16 @@ export class Cube {
   }
 
   public initRandom() {
-    const colorPicker = new FacetColorPicker(this.cubeSize);
+    this.init();
 
-    console.log("---initRandom", {
-      size: this.size,
-      cubeSize: this.cubeSize,
-      colorPicker: cloneDeep(colorPicker),
-    });
-
-    const tempFaces = [];
-
-    for (let faceIndex = 1; faceIndex <= 6; faceIndex++) {
-      const facets = [];
-
-      for (let facetIndex = 0; facetIndex < this.cubeSize; facetIndex++) {
-        facets.push(new Facet(colorPicker.popRandomColor()));
-      }
-
-      tempFaces[faceIndex] = [...facets];
+    const moves = randomIntFromInterval(20, 50);
+    const letterFaceKey = Object.values(LetterFace);
+    for (let index = 0; index < moves; index++) {
+      this.move({
+        face: letterFaceKey[randomIntFromInterval(0, 5)] as LetterFaceType,
+        degree: randomIntFromInterval(0, 1) ? 90 : -90,
+      });
     }
-
-    this.mountCube(tempFaces);
   }
 
   private mountCube(faces: Array<Facets>) {
@@ -301,6 +291,15 @@ export class Cube {
           face.S[index].color = oldFace.E[index].color;
           face.W[index].color = oldFace.S[index].color;
         }
+
+        face.facets[2].color = oldFace.facets[0].color;
+        face.facets[5].color = oldFace.facets[1].color;
+        face.facets[8].color = oldFace.facets[2].color;
+        face.facets[6].color = oldFace.facets[8].color;
+        face.facets[7].color = oldFace.facets[5].color;
+        face.facets[0].color = oldFace.facets[6].color;
+        face.facets[3].color = oldFace.facets[7].color;
+        face.facets[1].color = oldFace.facets[3].color;
         break;
 
       case -90:
@@ -310,10 +309,17 @@ export class Cube {
           face.S[index].color = oldFace.W[index].color;
           face.W[index].color = oldFace.N[index].color;
         }
+
+        face.facets[2].color = oldFace.facets[8].color;
+        face.facets[5].color = oldFace.facets[7].color;
+        face.facets[8].color = oldFace.facets[6].color;
+        face.facets[6].color = oldFace.facets[0].color;
+        face.facets[7].color = oldFace.facets[3].color;
+        face.facets[0].color = oldFace.facets[2].color;
+        face.facets[3].color = oldFace.facets[1].color;
+        face.facets[1].color = oldFace.facets[5].color;
         break;
     }
-
-    // PRECISA ROTACIONAR A FACE AINDA
 
     console.log("--move: Data end", {
       movement,
@@ -322,6 +328,8 @@ export class Cube {
       oldFace: print(oldFace),
       face: print(face),
     });
+
+    // this.faces[movementFace] = [...face];
 
     console.groupEnd();
   }

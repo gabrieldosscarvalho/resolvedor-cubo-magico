@@ -1,3 +1,4 @@
+import { LetterFace } from "./face";
 import { randomIntFromInterval } from "./utls";
 
 export enum FACET_COLORS {

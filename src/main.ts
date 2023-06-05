@@ -1,7 +1,8 @@
 //import { mainExampleCubeDemo } from "./example-cube/webgl-demo";
 
 import { Cube, Degrees } from "./cube";
-import { LetterFaceType } from "./face";
+import { LetterFace, LetterFaceType } from "./face";
+import { FACET_COLORS } from "./facet-colors";
 import { Viewport } from "./viewport";
 
 const getInputRadioValue = (
@@ -17,37 +18,39 @@ const getInputRadioValue = (
 };
 
 const listenerApplyButton = (cube: Cube, viewport: Viewport) => {
-  const domBtnApply = document.getElementById("btn-apply") as HTMLButtonElement;
-  const domFace = document.querySelectorAll(
-    "[name='face']"
-  ) as NodeList as RadioNodeList;
-  const domAngle = document.querySelectorAll(
-    "[name='angles']"
-  ) as NodeList as RadioNodeList;
+  const domBtnCommands = document.querySelectorAll(".btn-command");
 
-  domBtnApply.addEventListener("click", (event: MouseEvent) => {
-    event.stopPropagation();
+  domBtnCommands.forEach((domBtn) => {
+    (domBtn as HTMLButtonElement).addEventListener(
+      "click",
+      (event: MouseEvent) => {
+        event.stopPropagation();
 
-    console.log("--domBtnApply click", {
-      event,
-      domFace,
-      domAngle,
-    });
+        const [command, negativeDegree] = (
+          domBtn.getAttribute("data-value") ?? ""
+        ).split("");
 
-    const checkedFace = getInputRadioValue(domFace);
-    const checkedAngle = getInputRadioValue(domAngle);
+        cube.move({
+          face: command as LetterFaceType,
+          degree: negativeDegree ? -90 : 90,
+        });
 
-    console.log({ checkedFace, checkedAngle });
+        viewport.renderCube(cube);
 
-    if (checkedFace && checkedAngle) {
-      cube.move({
-        face: checkedFace as LetterFaceType,
-        degree: parseInt(checkedAngle) as Degrees,
-      });
+        registerCommand(command + (negativeDegree ?? ""));
 
-      viewport.renderCube(cube);
-    }
+        console.log({ cubeToKociembaString: cubeToKociembaString(cube) });
+      }
+    );
   });
+};
+
+const registerCommand = (command: string) => {
+  const domLogCommands = document.querySelector(
+    ".log-commands"
+  ) as HTMLDivElement;
+
+  domLogCommands.innerHTML += `<span>${command.toLocaleUpperCase()}</span>`;
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -83,6 +86,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //mainExampleCubeDemo(ctx);
   listenerApplyButton(cube, viewport);
+
+  console.log({ cubeToKociembaString: cubeToKociembaString(cube) });
 });
 
-const renderCube = (ctx: CanvasRenderingContext2D, cube: Cube) => {};
+const cubeToKociembaString = (cube: Cube): string => {
+  let result = "";
+
+  const facesKociemba = [
+    LetterFace.U,
+    LetterFace.R,
+    LetterFace.F,
+    LetterFace.D,
+    LetterFace.L,
+    LetterFace.B,
+  ];
+
+  for (const faceIndex of facesKociemba) {
+    for (const facet of cube.faces[faceIndex].facets) {
+      switch (facet.color) {
+        case FACET_COLORS.WHITE:
+          result += "U";
+          break;
+        case FACET_COLORS.RED:
+          result += "R";
+          break;
+        case FACET_COLORS.GREEN:
+          result += "F";
+          break;
+        case FACET_COLORS.YELLOW:
+          result += "D";
+          break;
+        case FACET_COLORS.ORANGE:
+          result += "L";
+          break;
+        case FACET_COLORS.BLUE:
+          result += "B";
+          break;
+      }
+    }
+  }
+
+  return result;
+};
