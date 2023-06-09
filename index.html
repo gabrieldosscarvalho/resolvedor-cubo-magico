@@ -21,7 +21,8 @@
         font-size: 1em;
       }
 
-      .btn-command {
+      .btn-command,
+      .resolver-btn {
         width: 50px;
         height: 50px;
         margin: 8px 4px;
@@ -31,10 +32,12 @@
         font-size: 1.5em;
       }
 
-      .btn-command:hover {
+      .btn-command:hover,
+      .resolver-btn:hover {
         box-shadow: 4px 4px 8px #555;
       }
-      .btn-command:active {
+      .btn-command:active,
+      .resolver-btn:active {
         border: 4px solid #ccc;
       }
 
@@ -62,6 +65,18 @@
         font-size: 0.7em;
         font-weight: bolder;
       }
+
+      .resolver {
+        margin: 36px 0;
+      }
+
+      .resolver-btn {
+        width: auto;
+        height: auto;
+        padding: 8px;
+        font-size: 1em;
+        margin-top: 0;
+      }
     </style>
   </head>
   <body>
@@ -69,10 +84,11 @@
 
     <div style="display: flex">
       <div>
-        <p>Comandos</p>
+        <h2>Comandos</h2>
 
         <div>
           <button
+            type="button"
             class="btn-command"
             data-value="F"
             style="background-color: #4caf50"
@@ -80,6 +96,7 @@
             F
           </button>
           <button
+            type="button"
             class="btn-command"
             data-value="R"
             style="background-color: #f44336"
@@ -87,6 +104,7 @@
             R
           </button>
           <button
+            type="button"
             class="btn-command"
             data-value="U"
             style="background-color: #ffffff"
@@ -94,6 +112,7 @@
             U
           </button>
           <button
+            type="button"
             class="btn-command"
             data-value="B"
             style="background-color: #03a9f4"
@@ -101,6 +120,7 @@
             B
           </button>
           <button
+            type="button"
             class="btn-command"
             data-value="L"
             style="background-color: #fb8c00"
@@ -108,6 +128,7 @@
             L
           </button>
           <button
+            type="button"
             class="btn-command"
             data-value="D"
             style="background-color: #ffeb3b"
@@ -118,6 +139,7 @@
 
         <div>
           <button
+            type="button"
             class="btn-command"
             data-value="F'"
             style="background-color: #4caf50"
@@ -125,6 +147,7 @@
             F'
           </button>
           <button
+            type="button"
             class="btn-command"
             data-value="R'"
             style="background-color: #f44336"
@@ -132,6 +155,7 @@
             R'
           </button>
           <button
+            type="button"
             class="btn-command"
             data-value="U'"
             style="background-color: #ffffff"
@@ -139,6 +163,7 @@
             U'
           </button>
           <button
+            type="button"
             class="btn-command"
             data-value="B'"
             style="background-color: #03a9f4"
@@ -146,6 +171,7 @@
             B'
           </button>
           <button
+            type="button"
             class="btn-command"
             data-value="L'"
             style="background-color: #fb8c00"
@@ -153,6 +179,7 @@
             L'
           </button>
           <button
+            type="button"
             class="btn-command"
             data-value="D'"
             style="background-color: #ffeb3b"
@@ -161,6 +188,14 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <div class="resolver">
+      <h2>Resolver cubo:</h2>
+      <button type="button" class="resolver-btn">Buscar solução</button>
+
+      <p>Solução:</p>
+      <div></div>
     </div>
 
     <div class="log-commands">

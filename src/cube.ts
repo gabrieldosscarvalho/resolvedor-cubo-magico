@@ -14,7 +14,7 @@
 import { cloneDeep } from "lodash";
 import { Face, LetterFace, LetterFaceType } from "./face";
 import { Facet, Facets } from "./facet";
-import { FACET_COLORS, FacetColorPicker } from "./facet-colors";
+import { FacetColorPicker } from "./facet-colors";
 import { randomIntFromInterval } from "./utls";
 
 export type NumberFaces = 1 | 2 | 3 | 4 | 5 | 6;
@@ -84,12 +84,6 @@ export class Cube {
 
   public init() {
     const colorPicker = new FacetColorPicker(this.cubeSize);
-
-    console.log("---init", {
-      size: this.size,
-      cubeSize: this.cubeSize,
-      colorPicker,
-    });
 
     let currentColor = colorPicker.popColor();
 
@@ -268,20 +262,10 @@ export class Cube {
   }
 
   move(movement: CubeMovement) {
-    console.group("--move");
-
     const movementFace = LetterFace[movement.face];
 
     const oldFace = cloneDeep(this.faces[movementFace]);
     const face = this.faces[movementFace];
-
-    console.log("--move: Data", {
-      movement,
-      movementFace,
-      faces: print(this.faces),
-      oldFace: print(oldFace),
-      face: print(face),
-    });
 
     switch (movement.degree) {
       case 90:
@@ -320,17 +304,5 @@ export class Cube {
         face.facets[1].color = oldFace.facets[5].color;
         break;
     }
-
-    console.log("--move: Data end", {
-      movement,
-      movementFace,
-      faces: print(this.faces),
-      oldFace: print(oldFace),
-      face: print(face),
-    });
-
-    // this.faces[movementFace] = [...face];
-
-    console.groupEnd();
   }
 }

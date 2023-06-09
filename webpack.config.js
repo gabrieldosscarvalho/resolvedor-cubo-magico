@@ -1,9 +1,12 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/main.ts",
+  entry: { bundle: "./src/main.ts", server: "./cube-resolver.server.ts" },
   devtool: "inline-source-map",
-  watch: true,
+  target: ["es6", "node"],
+  watchOptions: {
+    ignored: /resolvers/,
+  },
   module: {
     rules: [
       {
@@ -17,7 +20,7 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js"],
   },
   output: {
-    filename: "bundle.js",
+    filename: "[name].js",
     path: path.resolve(__dirname, "dist"),
   },
 };
