@@ -20,40 +20,6 @@ import { randomIntFromInterval } from "./utls";
 export type NumberFaces = 1 | 2 | 3 | 4 | 5 | 6;
 export type Degrees = -90 | 90;
 
-const faceMovements: Readonly<
-  Record<
-    LetterFaceType,
-    Readonly<LetterFace[]>
-    // Record<
-    //   keyof typeof LetterFace,
-    //   { faceValue: LetterFace; nextFace: LetterFace | undefined }
-    // >
-    // Readonly<
-    //   {
-    //     faceValue: LetterFace;
-    //     nextFace: LetterFace;
-    //   }[]
-    // >
-  >
-> = {
-  F: [LetterFace.R, LetterFace.D, LetterFace.L, LetterFace.U],
-  R: [LetterFace.F, LetterFace.U, LetterFace.B, LetterFace.D],
-  U: [LetterFace.R, LetterFace.F, LetterFace.L, LetterFace.B],
-  B: [LetterFace.U, LetterFace.L, LetterFace.D, LetterFace.R],
-  L: [LetterFace.U, LetterFace.F, LetterFace.D, LetterFace.B],
-  D: [LetterFace.F, LetterFace.R, LetterFace.B, LetterFace.L],
-  // {
-  //   R: { faceValue: LetterFace.U, nextFace: LetterFace.D },
-  //   D: { faceValue: LetterFace.R, nextFace: LetterFace.L },
-  //   L: { faceValue: LetterFace.D, nextFace: LetterFace.U },
-  //   U: { faceValue: LetterFace.L },
-  // },
-  // [
-  //   { faceValue: LetterFace.U, nextFace: LetterFace.D },
-  //   { faceValue: LetterFace.U, nextFace: LetterFace.D },
-  // ],
-} as const;
-
 interface CubeMovement {
   face: LetterFaceType;
   degree: Degrees;
@@ -61,11 +27,7 @@ interface CubeMovement {
 
 type FaceOld = Facet[];
 
-const print = (val: unknown) => (val ? JSON.parse(JSON.stringify(val)) : val);
-
 export class Cube {
-  // readonly currentFace = 1;
-
   facesOld: FaceOld[];
 
   faces: Face[];

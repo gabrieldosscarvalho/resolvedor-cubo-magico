@@ -14,17 +14,36 @@ O objetivo deste trabalho e implementar um resolvedor de Cubo Magico (Rubik’s 
 - Seja possível configurar o estado inicial de forma manual e também gerar um estado inicial de forma aleatória (ou seja, “misturar o cubo”).
 - Todos os passos executados pelo resolvedor até a resolução final do cubo sejam mostrados e possam ser auditados.
 
-### Como rodar:
+[Link da apresentação exibida em sala de aula](apresentacao-resolvedor-de-cubo-magico.pdf)
 
-Caso queira editar alguma coisa:
+---
+
+### Características:
+
+- Linguagem: Node/JavaScript
+- Algorítimo resolvedor: Kocimeba - [Two-Phase-Algorithm](http://kociemba.org/cube.htm)
+- Biblioteca para do resolvedor: [node-two-phase-algorithm](https://github.com/daniel-j/node-two-phase-algorithm)
+
+---
+
+### Como editar:
 
 - `npm install` - Instalar as dependências
 
-- `npm run build` - Transpilar o projeto e gerar o arquivo `./dist/bundle.js`
+- `npm run build` - Transpilar o projeto e gerar os arquivos `./dist/bundle.js` e `./dist/server.js`
 
-Independente se executou o passo anterior, para visualizar o cubo:
+  - ou `npm run watch` - Transpilar o projeto, ouvir as mudanças nos arquivos e os arquivos `./dist/bundle.js` e `./dist/server.js`
 
-- Rodar o arquivo `index.html` a partir de um servidor (ex.: http://localhost/index.html)
+---
 
-> Exemplo cubo 2D
+### Como rodar:
+
+- `npm run server` - Rodar o servidor
+
+- Acessar o link `http://localhost:3333/`
+
+---
+
+### Exemplo cubo 2D
+
 > ![Exemplo cubo 2D](cube-2d-example.png)

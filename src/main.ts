@@ -47,9 +47,6 @@ const cubeToKociembaString = (cube: Cube): string => {
 
 const listenerApplyButton = (cube: Cube, viewport: Viewport) => {
   const domBtnCommands = document.querySelectorAll(".btn-command");
-  const domBtnResolver = document.querySelector(
-    ".resolver-btn"
-  ) as HTMLButtonElement;
 
   domBtnCommands.forEach((domBtn) => {
     (domBtn as HTMLButtonElement).addEventListener(
@@ -74,12 +71,21 @@ const listenerApplyButton = (cube: Cube, viewport: Viewport) => {
     );
   });
 
-  const onceClickSearchSolution = async (event: MouseEvent) => {
-    domBtnResolver.removeEventListener("click", onceClickSearchSolution);
+  listenerResolverButton(cube, viewport);
+};
 
-    await cubeResolve(cube, viewport);
-  };
-  domBtnResolver.addEventListener("click", onceClickSearchSolution);
+const listenerResolverButton = (cube: Cube, viewport: Viewport) => {
+  const domBtnResolver = document.querySelector(
+    ".resolver-btn"
+  ) as HTMLButtonElement;
+
+  domBtnResolver.addEventListener(
+    "click",
+    async (event: MouseEvent) => {
+      await cubeResolve(cube, viewport);
+    },
+    { once: true }
+  );
 };
 
 const registerCommand = (command: string) => {
@@ -120,7 +126,7 @@ const cubeResolve = async (cube: Cube, viewport: Viewport): Promise<void> => {
 
   document.body.style.cursor = "default";
 
-  listenerApplyButton(cube, viewport);
+  listenerResolverButton(cube, viewport);
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -131,9 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
     throw new Error("Canvas não encotrado");
   }
 
-  // const cubeSize = parseInt(
-  //   prompt("Informe o tamanho do cubo (ex.: 2): ") ?? "2"
-  // );
   const cubeSize = 3;
 
   const viewport = new Viewport({
